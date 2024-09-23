@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral() // ใช้ mavenCentral() แทน jcenter()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.2' // ใช้ colon ':' สำหรับระบุเวอร์ชัน
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral() // ใช้ mavenCentral() แทน jcenter()
+    }
+}
+
+rootProject.buildDir = "../build"
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
