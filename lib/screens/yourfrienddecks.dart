@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flashcard/screens/cards.dart';
-import 'package:flashcard/screens/optionplay.dart';
+import 'package:flashcard/screens/optionplaydeckfriend.dart';
 import 'package:flutter/material.dart';
 
-class MyDecks extends StatelessWidget {
-  MyDecks({super.key});
+class YourfriendDecks extends StatelessWidget {
+  YourfriendDecks({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          const Color.fromARGB(255, 227, 206, 140), // เพิ่มสี background ที่นี่
       body: Column(
         children: [
           // เพิ่มส่วนการแสดง Decks
@@ -22,7 +24,7 @@ class MyDecks extends StatelessWidget {
   }
 
   // ฟังก์ชันดึงจำนวนการ์ดใน Deck
-  Future<int> _getCardCount(String deckId) async {
+  Future<int> _getCardCount(String deckFriendId, String owner) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return 0; // ถ้าไม่มีผู้ใช้ที่ล็อกอินอยู่
@@ -31,9 +33,9 @@ class MyDecks extends StatelessWidget {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('Deck') // Collection Deck
-          .doc(user.uid) // Document ตาม uid ของผู้ใช้
+          .doc(owner) // Document ตาม uid ของผู้ใช้
           .collection('title') // Collection title ภายใน Document
-          .doc(deckId) // เข้าถึง Deck ที่ต้องการ
+          .doc(deckFriendId) // เข้าถึง Deck ที่ต้องการ
           .collection('cards') // เข้าถึง Collection การ์ดภายใน Deck นั้น ๆ
           .get();
       return snapshot.size; // คืนค่าจำนวนการ์ดใน Deck นั้น ๆ
@@ -57,8 +59,8 @@ class MyDecks extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('Deck') // เข้าถึง Collection Deck
           .doc(user.uid) // เข้าถึง Document ตาม uid ของผู้ใช้
-          .collection('title') // เข้าถึง Collection title ภายใน Document
-          .orderBy('timestamp') // เรียงตาม timestamp
+          .collection('deckFriend') // เข้าถึง Collection title ภายใน Document
+          .orderBy('createdAt') // เรียงตาม timestamp
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -68,7 +70,7 @@ class MyDecks extends StatelessWidget {
         final decks = snapshot.data!.docs;
 
         return Padding(
-          padding: const EdgeInsets.only(top: 20,left: 5, right: 5),
+          padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // จำนวนคอลัมน์ของ Grid
@@ -79,19 +81,21 @@ class MyDecks extends StatelessWidget {
               final deck = decks[index];
               return GestureDetector(
                 onTap: () async {
-                  // คำนวณจำนวนการ์ดก่อนเรียกไปยังหน้า OptionPlay
-                  final cardCount = await _getCardCount(deck.id);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OptionPlay(
-                        deckId: deck.id, // ID ของ deck
-                        title: deck['title'], // ชื่อของ deck
-                        cardCount: cardCount, // ส่งจำนวนการ์ดไปที่หน้า OptionPlay
-                        enterCard: cardCount, // ส่งค่า enterCard ไปที่หน้า OptionPlay (ใช้ cardCount หรือค่าอื่นตามที่ต้องการ)
+                  final cardCount = await _getCardCount(deck.id, deck['friendId']);
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OptionPlayDeckFriend(
+                          deckId: deck.id,
+                          title: deck['title'],
+                          friendId: deck['friendId'],
+                          cardCount: cardCount,
+                          enterCard: cardCount,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
                 child: Card(
                   color: const Color.fromARGB(255, 132, 203, 232),
@@ -108,7 +112,7 @@ class MyDecks extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         FutureBuilder<int>(
-                          future: _getCardCount(deck.id),
+                          future: _getCardCount(deck.id, deck['friendId']),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {

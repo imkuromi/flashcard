@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashcard/screens/mydecks.dart';
 import 'package:flashcard/auth/auth_service.dart'; // import AuthService
 import 'package:flashcard/auth/login_screen.dart'; // import LoginScreen
+import 'package:flashcard/screens/yourfrienddecks.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,6 +16,7 @@ class Decks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Material App',
       home: DefaultTabController(
         length: 2, // จำนวน tab
@@ -43,7 +45,7 @@ class Decks extends StatelessWidget {
           body: TabBarView(
             children: [
               MyDecks(),
-              const Center(child: Text('Your Friend Decks Content')),
+              YourfriendDecks()
             ],
           ),
           backgroundColor: const Color.fromARGB(255, 227, 206, 140),

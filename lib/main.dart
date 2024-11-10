@@ -1,10 +1,7 @@
 // lib/main.dart
 import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flashcard/auth/login_screen.dart';
-import 'package:flashcard/screens/Singlemode.dart';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -35,8 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Singlemode(),
-      // home: LoginScreen(), // ใช้ LoginScreen เป็นหน้าเริ่มต้น
+      home: LoginScreen(), // ใช้ LoginScreen เป็นหน้าเริ่มต้น
     );
   }
 }

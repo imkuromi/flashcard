@@ -1,8 +1,8 @@
+// lib/auth/signup_screen.dart
 import 'dart:developer';
 import 'package:flashcard/auth/auth_service.dart';
 import 'package:flashcard/auth/login_screen.dart';
 import 'package:flashcard/home_screen.dart';
-import 'package:flashcard/widgets/button.dart';
 import 'package:flashcard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 
@@ -38,9 +38,7 @@ class _SignupScreenState extends State<SignupScreen> {
             const Spacer(),
             const Text("Signup",
                 style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500)),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
             CustomTextField(
               hint: "Enter Name",
               label: "Name",
@@ -60,9 +58,21 @@ class _SignupScreenState extends State<SignupScreen> {
               controller: _password,
             ),
             const SizedBox(height: 30),
-            CustomButton(
-              label: "Signup",
-              onPressed: _signup,
+            Container(
+              width: 250,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // กำหนดสีพื้นหลัง
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // กำหนดมุมโค้ง
+                  ),
+                ),
+                onPressed: _signup,
+                child: const Text(
+                  "Signup",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
             const SizedBox(height: 5),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -84,17 +94,24 @@ class _SignupScreenState extends State<SignupScreen> {
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
 
-  goToHome(BuildContext context,String email) => Navigator.push(
+  goToHome(BuildContext context, String email) => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  HomeScreen(email: email,)),
+        MaterialPageRoute(builder: (context) => HomeScreen(email: email)),
       );
 
   _signup() async {
     final user =
         await _auth.createUserWithEmailAndPassword(_email.text, _password.text);
     if (user != null) {
-      log("User Created Succesfully");
-      goToHome(context,_email.text);
+      log("User Created Successfully");
+      goToHome(context, _email.text);
+    } else {
+      // แสดงข้อความแจ้งเตือนเมื่อการสมัครไม่สำเร็จ
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Signup failed. Please try again."),
+        ),
+      );
     }
   }
 }
