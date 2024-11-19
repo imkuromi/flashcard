@@ -5,7 +5,7 @@ import 'package:flashcard/screens/optionplay.dart';
 import 'package:flutter/material.dart';
 
 class MyDecks extends StatelessWidget {
-  MyDecks({super.key});
+  const MyDecks({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +87,7 @@ class MyDecks extends StatelessWidget {
                       builder: (context) => OptionPlay(
                         deckId: deck.id, // ID ของ deck
                         title: deck['title'], // ชื่อของ deck
+                        description: deck['description'],
                         cardCount: cardCount, // ส่งจำนวนการ์ดไปที่หน้า OptionPlay
                         enterCard: cardCount, // ส่งค่า enterCard ไปที่หน้า OptionPlay (ใช้ cardCount หรือค่าอื่นตามที่ต้องการ)
                       ),

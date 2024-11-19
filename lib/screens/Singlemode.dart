@@ -4,14 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:audioplayers/audioplayers.dart'; // Import audioplayers package
 import 'dart:math'; // Import this to use Random
 import 'package:flashcard/screens/decks.dart';
+// import 'package:flashcard/screens/render_card_content.dart';
 
 class Singlemode extends StatelessWidget {
   final String deckId;
   final String startSide; // Variable to receive startSide
   final String title;
   final int cardCount;
-  final int
-      enterCard; // Variable to receive the number of cards from OptionPlay
+  final int enterCard; // Variable to receive the number of cards from OptionPlay
   final String friendId;
 
   const Singlemode({
@@ -49,14 +49,14 @@ class CardFlipScreen extends StatefulWidget {
   final String friendId;
 
   const CardFlipScreen({
-    Key? key,
+    super.key,
     required this.deckId,
     required this.startSide,
     required this.title,
     required this.cardCount,
     required this.enterCard,
     required this.friendId,
-  }) : super(key: key);
+  });
 
   @override
   _CardFlipScreenState createState() => _CardFlipScreenState();
@@ -76,12 +76,12 @@ class _CardFlipScreenState extends State<CardFlipScreen> {
   }
 
   Future<void> fetchCards() async {
-    final user = await FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // Fetch data from Firestore
       final querySnapshot = await FirebaseFirestore.instance
           .collection('Deck')
-          .doc(widget.friendId.isEmpty? user.uid : widget.friendId)
+          .doc(widget.friendId.isEmpty ? user.uid : widget.friendId)
           .collection('title')
           .doc(widget.deckId)
           .collection('cards')
@@ -202,6 +202,89 @@ class _CardFlipScreenState extends State<CardFlipScreen> {
     }
   }
 
+  Widget renderCardContentSingle(CardData card, String side) {
+  final layout = side == "front" ? card.layoutFront : card.layoutBack;
+  final questionText = side == "front" ? card.questionFront : card.questionBack;
+  final imageUrl = side == "front" ? card.imageUrlFront : card.imageUrlBack;
+  final color = side == "front" ? const Color.fromARGB(255, 89, 188, 221) : Colors.teal;
+
+  switch (layout) {
+    case "text":
+      return Card(
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              questionText ?? 'No Question', // Ensure no null values
+              style: const TextStyle(fontSize: 24, color: Colors.white),
+            ),
+          ],
+        ),
+      );
+
+    case "image":
+      return Card(
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (imageUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Image.network(imageUrl!, fit: BoxFit.contain),
+              ),
+          ],
+        ),
+      );
+
+    case "ImageText":
+      return Card(
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (imageUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Image.network(imageUrl!, fit: BoxFit.contain),
+              ),
+            const SizedBox(height: 10),
+            Text(
+              questionText ?? 'No Question',
+              style: const TextStyle(fontSize: 24, color: Colors.white),
+            ),
+          ],
+        ),
+      );
+
+    case "TextImage":
+      return Card(
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              questionText ?? 'No Question',
+              style: const TextStyle(fontSize: 24, color: Colors.white),
+            ),
+            const SizedBox(height: 10),
+            if (imageUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Image.network(imageUrl!, fit: BoxFit.contain),
+              ),
+          ],
+        ),
+      );
+
+    default:
+      return const Text('Invalid layout');
+  }
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -275,84 +358,18 @@ class _CardFlipScreenState extends State<CardFlipScreen> {
                           child: SizedBox(
                             width: 350, // Set card width
                             height: 600, // Set card height
-                            child: cards[currentIndex].isFlipped
-                                ? Card(
-                                    key: ValueKey('back$currentIndex'),
-                                    color: Colors.teal,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          cards[currentIndex].layoutBack ??
-                                              'No Layout',
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
-                                        Text(
-                                          cards[currentIndex].questionBack ??
-                                              'No Question',
-                                          style: const TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.white),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        if (cards[currentIndex].imageUrlBack !=
-                                            null)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16.0),
-                                            child: Image.network(
-                                                cards[currentIndex]
-                                                    .imageUrlBack!),
-                                          ),
-                                      ],
-                                    ),
-                                  )
-                                : Card(
-                                    key: ValueKey('front$currentIndex'),
-                                    color:
-                                        const Color.fromARGB(255, 89, 188, 221),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          cards[currentIndex].layoutFront ??
-                                              'No Layout',
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
-                                        Text(
-                                          cards[currentIndex].questionFront ??
-                                              'No Question',
-                                          style: const TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.white),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        if (cards[currentIndex].imageUrlFront !=
-                                            null)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16.0),
-                                            child: Image.network(
-                                                cards[currentIndex]
-                                                    .imageUrlFront!),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
+                            child:renderCardContentSingle(
+                          cards[currentIndex],
+                          cards[currentIndex].isFlipped ? 'back' : 'front',
+                        ),
                           ),
                         ),
                       ),
                     ),
                     if ((cards[currentIndex].isFlipped &&
-                            cards[currentIndex].audioUrlBack != null) ||
+                            cards[currentIndex].audioUrlBack != null) && cards[currentIndex].audioUrlBack!.isNotEmpty ||
                         (!cards[currentIndex].isFlipped &&
-                            cards[currentIndex].audioUrlFront != null))
+                            cards[currentIndex].audioUrlFront != null && cards[currentIndex].audioUrlFront!.isNotEmpty))
                       Positioned(
                         bottom:
                             0, // Increase this value to move the icon further away from the card

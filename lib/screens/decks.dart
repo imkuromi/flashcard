@@ -105,8 +105,8 @@ class Decks extends StatelessWidget {
 
   // ฟังก์ชันออกจากระบบ
   Future<void> _logout(BuildContext context) async {
-    final AuthService _authService = AuthService(); // สร้าง instance ของ AuthService
-    await _authService.signout(); // ออกจากระบบ
+    final AuthService authService = AuthService(); // สร้าง instance ของ AuthService
+    await authService.signout(); // ออกจากระบบ
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()), // ไปที่หน้า LoginScreen

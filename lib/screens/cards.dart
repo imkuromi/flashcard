@@ -7,8 +7,7 @@ class CardsScreen extends StatelessWidget {
   final String deckId;
   final String title;
 
-  const CardsScreen({Key? key, required this.deckId, required this.title})
-      : super(key: key);
+  const CardsScreen({super.key, required this.deckId, required this.title});
 
   @override
   Widget build(BuildContext context) {

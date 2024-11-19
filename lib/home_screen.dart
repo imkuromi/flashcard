@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: 250,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: 250,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

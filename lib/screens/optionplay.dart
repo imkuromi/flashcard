@@ -1,3 +1,4 @@
+import 'package:flashcard/screens/HistoryScreen.dart';
 import 'package:flashcard/screens/Multiplemode.dart';
 import 'package:flashcard/screens/Singlemode.dart';
 import 'package:flutter/material.dart';
@@ -5,16 +6,18 @@ import 'package:flutter/material.dart';
 class OptionPlay extends StatefulWidget {
   final String deckId;
   final String title;
+  final String description;
   final int cardCount; // จำนวนการ์ดทั้งหมดใน deck
   final int enterCard; // จำนวนการ์ดที่ต้องการเล่น
 
   const OptionPlay({
-    Key? key,
+    super.key,
     required this.deckId,
     required this.title,
+    required this.description,
     required this.cardCount,
     required this.enterCard,
-  }) : super(key: key);
+  });
 
   @override
   _OptionPlayState createState() => _OptionPlayState();
@@ -60,19 +63,32 @@ class _OptionPlayState extends State<OptionPlay> {
       }
     } else if (isMultipleMode) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MultipleMode(
-              deckId: widget.deckId,
-              title: widget.title,
-              startSide: isStartFront ? 'front' : 'back',
-              friendId: '',
-              enterCard: enteredCardCount, // ส่งค่าจำนวนการ์ดที่กรอก
-              cardCount: widget.cardCount, // จำนวนการ์ดทั้งหมดใน deck
-            ),
+        context,
+        MaterialPageRoute(
+          builder: (context) => MultipleMode(
+            deckId: widget.deckId,
+            title: widget.title,
+            startSide: isStartFront ? 'front' : 'back',
+            friendId: '',
+            enterCard: enteredCardCount, // ส่งค่าจำนวนการ์ดที่กรอก
+            cardCount: widget.cardCount, // จำนวนการ์ดทั้งหมดใน deck
           ),
-          );
+        ),
+      );
     }
+  }
+
+  void _navigateToHistory() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HistoryScreen(
+          title: widget.title,
+          deckId: widget.deckId,
+          isFriendDeck: false,
+        ),
+      ),
+    );
   }
 
   @override
@@ -84,9 +100,9 @@ class _OptionPlayState extends State<OptionPlay> {
             widget.title,
             style: const TextStyle(
               fontSize: 26,
-              color: Colors.black, // Set text color to black
+              color: Colors.black,
               fontWeight: FontWeight.w500,
-              letterSpacing: 1.0, // Letter spacing
+              letterSpacing: 1.0,
             ),
           ),
         ),
@@ -96,6 +112,13 @@ class _OptionPlayState extends State<OptionPlay> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            iconSize: 30,
+            onPressed: _navigateToHistory,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -113,6 +136,26 @@ class _OptionPlayState extends State<OptionPlay> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Text(
+                        'Description ',
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black, // Set text color to black
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 1.0, // Font weight
+                        ),
+                      ),
+                      Text(
+                        widget.description.isNotEmpty
+                            ? widget.description
+                            : '-',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(
+                              255, 83, 81, 81), // Set text color to black
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
                       const Text(
                         'Options Play',
                         style: TextStyle(

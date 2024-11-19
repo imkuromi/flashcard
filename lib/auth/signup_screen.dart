@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flashcard/auth/auth_service.dart';
 import 'package:flashcard/auth/login_screen.dart';
 import 'package:flashcard/home_screen.dart';
-import 'package:flashcard/widgets/textfield.dart';
+import 'package:flashcard/auth/textfield.dart';
 import 'package:flutter/material.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -54,11 +54,11 @@ class _SignupScreenState extends State<SignupScreen> {
             CustomTextField(
               hint: "Enter Password",
               label: "Password",
-              isPassword: true,
+              // isPassword: true,
               controller: _password,
             ),
             const SizedBox(height: 30),
-            Container(
+            SizedBox(
               width: 250,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

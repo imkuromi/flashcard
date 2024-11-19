@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flashcard/auth/auth_service.dart';
 import 'package:flashcard/screens/decks.dart';
-import 'package:flashcard/widgets/textfield.dart';
+import 'package:flashcard/auth/textfield.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = AuthService();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  bool _isPasswordVisible = false; // ตัวแปรสำหรับสลับการแสดง/ซ่อนรหัสผ่าน
 
   @override
   void dispose() {
@@ -45,20 +46,34 @@ class _LoginScreenState extends State<LoginScreen> {
               hint: "Enter Email",
               label: "Email",
               controller: _email,
+              obscureText: false, // ไม่ต้องซ่อนข้อความ
+              suffixIcon: null,
             ),
             const SizedBox(height: 20),
             CustomTextField(
               hint: "Enter Password",
               label: "Password",
               controller: _password,
+              obscureText: !_isPasswordVisible,  // ใช้ _isPasswordVisible เพื่อสลับการซ่อนรหัสผ่าน
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;  // สลับการแสดง/ซ่อนรหัสผ่าน
+                  });
+                },
+              ),
             ),
             const SizedBox(height: 30),
-            Container(
+            SizedBox(
               width: 280,
               height: 45,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255), // กำหนดสีพื้นหลัง
+                  backgroundColor: const Color.fromARGB(
+                      255, 255, 255, 255), // กำหนดสีพื้นหลัง
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30), // กำหนดมุมโค้ง
                   ),
@@ -74,13 +89,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 15,),
-            Container(
+            const SizedBox(
+              height: 15,
+            ),
+            SizedBox(
               width: 280,
               height: 45,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255), // กำหนดสีพื้นหลัง
+                    backgroundColor: const Color.fromARGB(
+                        255, 255, 255, 255), // กำหนดสีพื้นหลัง
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30), // กำหนดมุมโค้ง
                     ),
@@ -93,15 +111,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Row(
                     children: [
-                      SizedBox(width: 10,),
-                      Container(
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
                         width: 20, // กำหนดความกว้างของรูปภาพ
                         child: Image.asset(
                           'assets/images/google.png',
                           fit: BoxFit.contain, // ปรับขนาดภาพให้เหมาะสม
                         ),
                       ),
-                      const SizedBox(width: 15,),
+                      const SizedBox(
+                        width: 15,
+                      ),
                       const Text(
                         "Sign in with Google",
                         style: TextStyle(
@@ -122,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // ฟังก์ชันเพื่อไปยังหน้า DeckListScreen
   goToDecks(BuildContext context) => Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Decks()),
+        MaterialPageRoute(builder: (context) => const Decks()),
       );
 
   _login() async {

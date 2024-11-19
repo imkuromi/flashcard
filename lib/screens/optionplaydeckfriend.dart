@@ -1,3 +1,4 @@
+import 'package:flashcard/screens/HistoryScreen.dart';
 import 'package:flashcard/screens/Multiplemode.dart';
 import 'package:flashcard/screens/Singlemode.dart';
 import 'package:flutter/material.dart';
@@ -8,15 +9,16 @@ class OptionPlayDeckFriend extends StatefulWidget {
   final int cardCount;
   final int enterCard;
   final String friendId;
+  final String description;
 
-  const OptionPlayDeckFriend({
-    Key? key,
-    required this.deckId,
-    required this.title,
-    required this.cardCount,
-    required this.enterCard,
-    required this.friendId,
-  }) : super(key: key);
+  const OptionPlayDeckFriend(
+      {super.key,
+      required this.deckId,
+      required this.title,
+      required this.cardCount,
+      required this.enterCard,
+      required this.friendId,
+      required this.description});
 
   @override
   _OptionPlayDeckFriendState createState() => _OptionPlayDeckFriendState();
@@ -56,24 +58,47 @@ class _OptionPlayDeckFriendState extends State<OptionPlayDeckFriend> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid number of cards')),
+          const SnackBar(
+              content: Text(
+                  'Please enter the correct number of cards (Recommended: more than 3)')),
         );
       }
     } else if (isMultipleMode) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MultipleMode(
-            deckId: widget.deckId,
-            title: widget.title,
-            startSide: isStartFront ? 'front' : 'back',
-            friendId: widget.friendId,
-            enterCard: enteredCardCount,
-            cardCount: widget.cardCount,
+      if (enteredCardCount > 0 && enteredCardCount <= widget.cardCount) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MultipleMode(
+              deckId: widget.deckId,
+              title: widget.title,
+              startSide: isStartFront ? 'front' : 'back',
+              friendId: widget.friendId,
+              enterCard: enteredCardCount,
+              cardCount: widget.cardCount,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Please enter the correct number of cards (Recommended: more than 3)')),
+        );
+      }
     }
+  }
+
+  void _navigateToHistory() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HistoryScreen(
+          title: widget.title,
+          deckId: widget.deckId,
+          isFriendDeck: true,
+        ),
+      ),
+    );
   }
 
   @override
@@ -97,6 +122,13 @@ class _OptionPlayDeckFriendState extends State<OptionPlayDeckFriend> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            iconSize: 30,
+            onPressed: _navigateToHistory,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -114,6 +146,26 @@ class _OptionPlayDeckFriendState extends State<OptionPlayDeckFriend> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Text(
+                        'Description ',
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black, // Set text color to black
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 1.0, // Font weight
+                        ),
+                      ),
+                      Text(
+                        widget.description.isNotEmpty
+                            ? widget.description
+                            : '-',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(
+                              255, 83, 81, 81), // Set text color to black
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
                       const Text(
                         'Options Play',
                         style: TextStyle(

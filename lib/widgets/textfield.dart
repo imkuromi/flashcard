@@ -6,7 +6,7 @@ class CustomTextField extends StatelessWidget {
       required this.hint,
       required this.label,
       this.controller,
-      this.isPassword = false});
+      this.isPassword = false, required bool obscureText, required IconButton suffixIcon});
   final String hint;
   final String label;
   final bool isPassword;
