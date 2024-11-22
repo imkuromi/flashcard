@@ -141,7 +141,7 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
 
   void _nextCard() {
     setState(() {
-      if (currentIndex < cards.length - 1) {
+      if (currentIndex < widget.enterCard - 1) {
         currentIndex++;
       } else {
         _showCompletionDialog();
@@ -326,24 +326,24 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
     debugPrint(options.toString());
 
     debugPrint('Number of cards: ${cards.length}');
-    if (cards.length < 4) {
-      return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Decks()),
-              ); // ย้อนกลับไปหน้าก่อนหน้า
-            },
-          ),
-          title: Text(widget.title),
-          backgroundColor: const Color.fromARGB(255, 235, 235, 235),
-        ),
-        body: const Center(child: Text('Must have more than 5 cards')),
-      );
-    }
+    // if (cards.length < 4) {
+    //   return Scaffold(
+    //     appBar: AppBar(
+    //       leading: IconButton(
+    //         icon: const Icon(Icons.arrow_back),
+    //         onPressed: () {
+    //           Navigator.push(
+    //             context,
+    //             MaterialPageRoute(builder: (context) => const Decks()),
+    //           ); // ย้อนกลับไปหน้าก่อนหน้า
+    //         },
+    //       ),
+    //       title: Text(widget.title),
+    //       backgroundColor: const Color.fromARGB(255, 235, 235, 235),
+    //     ),
+    //     body: const Center(child: Text('Must have more than 5 cards')),
+    //   );
+    // 
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 248, 226, 136),
         appBar: AppBar(
